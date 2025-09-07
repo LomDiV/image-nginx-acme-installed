@@ -1,4 +1,7 @@
-﻿# Description 
+﻿> [!WARNING]
+> It is still work in progress 
+
+# Description 
 Her is Dockerfile to build image based on Nginx with installed nginx-acme module
 
 # Sources used 
