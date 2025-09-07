@@ -35,7 +35,7 @@ jobs:
           password: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Build the Docker image
-        run: docker build . --file Dockerfile-bookworm --tag ghcr.io/${{ env.REPO_LOWER }}-bookworm:${{ env.IMAGE_VERSION }}
+        run: docker build . --file Dockerfile-bookworm --tag ghcr.io/${{ env.REPO_LOWER }}-bookworm:${{ env.IMAGE_VERSION }} --tag ghcr.io/${{ env.REPO_LOWER }}-bookworm:latest
 
       - name: Push Docker image
-        run: docker push ghcr.io/${{ env.REPO_LOWER }}-bookworm:${{ env.IMAGE_VERSION }}
+        run: docker push --all-tags ghcr.io/${{ env.REPO_LOWER }}-bookworm
