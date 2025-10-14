@@ -21,7 +21,18 @@ jobs:
 
       - name: Set image version
         id: set_version
-        run: echo "IMAGE_VERSION=$(date +%s)" >> $GITHUB_ENV
+        # Conditional logic:
+        # If github.ref starts with 'refs/tags/', use the tag name (e.g., v1.0.0)
+        # otherwise, use the current timestamp (for branch pushes/PRs)
+        run: |
+          VERSION_TAG=${{ github.ref_name }}
+          if [[ "${{ github.ref }}" == refs/tags/* ]]; then
+            echo "IMAGE_VERSION=$VERSION_TAG" >> $GITHUB_ENV
+            echo "ROLLING_VERSION=latest" >> $GITHUB_ENV
+          else
+            echo "IMAGE_VERSION=$(date +%s)" >> $GITHUB_ENV
+            echo "ROLLING_VERSION=develop" >> $GITHUB_ENV
+          fi
 
       - name: Set lowercase repository name
         id: repo_name_lower
@@ -35,7 +46,7 @@ jobs:
           password: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Build the Docker image
-        run: docker build . --file Dockerfile-debian --tag ghcr.io/${{ env.REPO_LOWER }}-trixie:${{ env.IMAGE_VERSION }} --tag ghcr.io/${{ env.REPO_LOWER }}-trixie:latest
+        run: docker build . --file Dockerfile-debian --tag ghcr.io/${{ env.REPO_LOWER }}-trixie:${{ env.IMAGE_VERSION }} --tag ghcr.io/${{ env.REPO_LOWER }}-trixie:${{ env.ROLLING_VERSION }}
 
       - name: Push Docker image
         run: docker push --all-tags ghcr.io/${{ env.REPO_LOWER }}-trixie
