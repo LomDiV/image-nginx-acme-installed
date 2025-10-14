@@ -51,9 +51,9 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Build the Docker image
-        run: docker build . --file Dockerfile-debian --tag ghcr.io/${{ env.REPO_LOWER }}-trixie:${{ env.IMAGE_VERSION }} --tag ghcr.io/${{ env.REPO_LOWER }}-trixie:${{ env.ROLLING_VERSION }}
+      - name: Build the Docker image on Debian
+        run: docker build . --file Dockerfile-debian --tag ghcr.io/${{ env.REPO_LOWER }}:${{ env.IMAGE_VERSION }}-trixie --tag ghcr.io/${{ env.REPO_LOWER }}:${{ env.ROLLING_VERSION }}-trixie --tag ghcr.io/${{ env.REPO_LOWER }}:${{ env.ROLLING_VERSION }} 
 
       - name: Push Docker image
         if: github.event_name == 'push' && (github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/tags/'))
-        run: docker push --all-tags ghcr.io/${{ env.REPO_LOWER }}-trixie
+        run: docker push --all-tags ghcr.io/${{ env.REPO_LOWER }}
