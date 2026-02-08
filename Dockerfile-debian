@@ -1,6 +1,6 @@
 ﻿FROM debian:trixie-slim AS module-builder
 
-ENV NGINX_VERSION=1.29.4
+ENV NGINX_VERSION=1.29.5
 
 WORKDIR /usr/src
 
@@ -34,7 +34,7 @@ RUN cd nginx-$NGINX_VERSION \
     && ./configure --with-compat  --with-http_ssl_module --add-dynamic-module=../nginx-acme \
     && make modules
 
-FROM nginx:1.29.4-trixie
+FROM nginx:1.29.5-trixie
 
 RUN mkdir -p /etc/nginx/modules/
 
@@ -43,3 +43,4 @@ COPY --from=module-builder /usr/src/nginx-$NGINX_VERSION/objs/ngx_http_acme_modu
 EXPOSE 80
 
 EXPOSE 443
+
