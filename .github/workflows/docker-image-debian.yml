@@ -2,7 +2,9 @@ name: Docker Image CI
 
 on:
   push:
-    branches: [ "main" ]
+    branches:
+      - "main"
+      - "dev/*"
     tags:
       - 'ver/*' # Changed: Now matches tags like 'ver/1.2.3'
   pull_request:
@@ -34,6 +36,11 @@ jobs:
             
             echo "IMAGE_VERSION=$PARSED_VERSION" >> $GITHUB_ENV
             echo "ROLLING_VERSION=latest" >> $GITHUB_ENV
+          elif [[ "${{ github.ref }}" == refs/heads/dev/* ]]; then
+            PARSED_VERSION="${VERSION_REF_NAME#dev/}"
+            
+            echo "IMAGE_VERSION=$PARSED_VERSION-develop" >> $GITHUB_ENV
+            echo "ROLLING_VERSION=$PARSED_VERSION-develop" >> $GITHUB_ENV
           else
             # For pushes to 'main' branch or pull requests
             echo "IMAGE_VERSION=$(date +%s)" >> $GITHUB_ENV
@@ -55,5 +62,5 @@ jobs:
         run: docker build . --file Dockerfile-debian --tag ghcr.io/${{ env.REPO_LOWER }}:${{ env.IMAGE_VERSION }}-trixie --tag ghcr.io/${{ env.REPO_LOWER }}:${{ env.ROLLING_VERSION }}-trixie --tag ghcr.io/${{ env.REPO_LOWER }}:${{ env.ROLLING_VERSION }} 
 
       - name: Push Docker image
-        if: github.event_name == 'push' && (github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/tags/'))
+        if: github.event_name == 'push' && (github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/heads/dev/') || startsWith(github.ref, 'refs/tags/'))
         run: docker push --all-tags ghcr.io/${{ env.REPO_LOWER }}
