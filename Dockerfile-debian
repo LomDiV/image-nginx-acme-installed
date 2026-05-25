@@ -1,6 +1,6 @@
 ﻿FROM debian:trixie-slim AS module-builder
 
-ENV NGINX_VERSION=1.31.0
+ENV NGINX_VERSION=1.31.1
 
 WORKDIR /usr/src
 
@@ -34,7 +34,7 @@ RUN cd nginx-$NGINX_VERSION \
     && ./configure --with-compat  --with-http_ssl_module --add-dynamic-module=../nginx-acme \
     && make modules
 
-FROM nginx:1.31.0-trixie
+FROM nginx:1.31.1-trixie
 
 RUN mkdir -p /etc/nginx/modules/
 
